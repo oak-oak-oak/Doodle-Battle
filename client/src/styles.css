@@ -151,6 +151,20 @@ h4 { font-weight: 700; font-size: 14px; letter-spacing: 0.04em; color: var(--ink
 .home .tagline { margin-bottom: 36px; }
 .home-form { display: flex; flex-direction: column; gap: 10px; }
 .home-form .btn { margin-top: 4px; }
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 28px;
+  align-self: center;
+  color: var(--ink-mute);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color .15s;
+}
+.github-link:hover { color: var(--ink); }
+.github-link svg { display: block; }
 
 /* ---------- the logo ---------- */
 
