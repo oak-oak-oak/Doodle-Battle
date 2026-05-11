@@ -2,5 +2,6 @@ node_modules/
 dist/
 .env
 .env.local
+.partykit/
 .DS_Store
 *.log

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://www.partykit.io/schema.json",
+  "name": "doodle-battle",
+  "main": "party.js",
+  "compatibilityDate": "2026-05-11"
+}

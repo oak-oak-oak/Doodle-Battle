@@ -12,7 +12,6 @@ import SpeedrunBanner from './components/SpeedrunBanner.jsx';
 import GithubCorner from './components/GithubCorner.jsx';
 import { fanfare } from './sound.js';
 
-
 function JudgeOverlay({ name }) {
   return (
     <div className="judge-overlay">
@@ -23,6 +22,11 @@ function JudgeOverlay({ name }) {
   );
 }
 
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function makeRoomCode() {
+  return Array.from({ length: 4 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
+}
+
 export default function App() {
   const [room, setRoom] = useState(null);
   const [playerId, setPlayerId] = useState(null);
@@ -31,10 +35,32 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const announcedRoundRef = useRef(-1);
   const judgeAnnouncedRef = useRef(-1);
+  const pendingNameRef = useRef(null);
 
   useEffect(() => {
     function onUpdate(r) { setRoom(r); }
-    function onConnect() { setPlayerId(socket.id); }
+    function onReady({ id }) {
+      // server tells us our connection ID
+      setPlayerId(id);
+      // identify ourselves with the pending name
+      if (pendingNameRef.current) {
+        socket.emit('room:identify', { name: pendingNameRef.current });
+      }
+    }
+    function onJoined({ playerId }) {
+      setPlayerId(playerId);
+      pendingNameRef.current = null;
+      setError('');
+    }
+    function onRoomError({ error }) {
+      setError(error || 'Connection failed');
+      socket.disconnect();
+      setRoom(null);
+      pendingNameRef.current = null;
+    }
+    function onDisconnect() {
+      // a clean disconnect from leaving — already handled in leaveRoom
+    }
     function onToast({ kind, name }) {
       if (kind === 'comeback') {
         setToast(`🎲 ${name} burned a comeback token — re-rolling!`);
@@ -42,12 +68,17 @@ export default function App() {
       }
     }
     socket.on('room:update', onUpdate);
-    socket.on('connect', onConnect);
+    socket.on('connect:ready', onReady);
+    socket.on('room:joined', onJoined);
+    socket.on('room:error', onRoomError);
+    socket.on('disconnect', onDisconnect);
     socket.on('toast', onToast);
-    if (socket.connected) setPlayerId(socket.id);
     return () => {
       socket.off('room:update', onUpdate);
-      socket.off('connect', onConnect);
+      socket.off('connect:ready', onReady);
+      socket.off('room:joined', onJoined);
+      socket.off('room:error', onRoomError);
+      socket.off('disconnect', onDisconnect);
       socket.off('toast', onToast);
     };
   }, []);
@@ -65,20 +96,21 @@ export default function App() {
   }, [room?.phase, room?.round, room?.isSpeedrun]);
 
   function createRoom(name) {
-    socket.emit('room:create', { name }, (res) => {
-      if (!res?.ok) setError(res?.error || 'Failed');
-      else { setPlayerId(res.playerId); setError(''); }
-    });
+    setError('');
+    pendingNameRef.current = name;
+    socket.connect(makeRoomCode());
   }
   function joinRoom(code, name) {
-    socket.emit('room:join', { code, name }, (res) => {
-      if (!res?.ok) setError(res?.error || 'Failed');
-      else { setPlayerId(res.playerId); setError(''); }
-    });
+    setError('');
+    pendingNameRef.current = name;
+    socket.connect((code || '').toUpperCase());
   }
   function leaveRoom() {
     socket.emit('room:leave');
+    socket.disconnect();
     setRoom(null);
+    setPlayerId(null);
+    pendingNameRef.current = null;
   }
 
   if (!room) return (
