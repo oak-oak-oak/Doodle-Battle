@@ -5,7 +5,12 @@ import cors from 'cors';
 import { Server } from 'socket.io';
 
 const PORT = process.env.PORT || 3001;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+// CLIENT_ORIGIN can be a single origin or a comma-separated list (dev + prod URLs)
+const CLIENT_ORIGINS = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const corsOrigin = CLIENT_ORIGINS.length === 1 ? CLIENT_ORIGINS[0] : CLIENT_ORIGINS;
 
 const NORMAL_ROUND_SECONDS = 120;
 const SPEEDRUN_ROUND_SECONDS = 30;
@@ -16,12 +21,12 @@ const JUDGE_ANNOUNCE_SECONDS = 3;
 const SABOTAGE_SECONDS = 6;
 
 const app = express();
-app.use(cors({ origin: CLIENT_ORIGIN }));
+app.use(cors({ origin: corsOrigin }));
 app.get('/health', (_, res) => res.json({ ok: true }));
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: CLIENT_ORIGIN },
+  cors: { origin: corsOrigin },
   maxHttpBufferSize: 5_000_000,
 });
 
