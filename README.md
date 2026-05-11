@@ -43,25 +43,6 @@ Open `http://localhost:5173` in a few browser windows. Or join from your phone o
 - **Streak alerts** — win 3 in a row and the whole room gets a "stop them" toast
 - **Post-game highlight reel** — replays of each round's winning drawing
 
-## Deploy
-
-**Server (PartyKit / Cloudflare):**
-
-```bash
-cd server
-npx partykit deploy
-```
-
-Free tier, hard-capped (no automatic billing). First run prompts a one-time PartyKit / Cloudflare login. Outputs a URL like `https://doodle-battle.<your-user>.partykit.dev`.
-
-**Client (Vercel):**
-
-In Vercel dashboard, import the GitHub repo and set:
-- **Root Directory:** `client`
-- **Environment variable:** `VITE_PARTYKIT_HOST` = the host from the PartyKit deploy (no `https://`, no port — e.g. `doodle-battle.you.partykit.dev`)
-
-Vercel will auto-detect Vite and build.
-
 ## Project layout
 
 ```
