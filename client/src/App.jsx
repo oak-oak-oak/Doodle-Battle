@@ -9,6 +9,7 @@ import PromptVote from './screens/PromptVote.jsx';
 import PromptSubmission from './screens/PromptSubmission.jsx';
 import Highlights from './screens/Highlights.jsx';
 import SpeedrunBanner from './components/SpeedrunBanner.jsx';
+import GithubCorner from './components/GithubCorner.jsx';
 import { fanfare } from './sound.js';
 
 
@@ -80,7 +81,12 @@ export default function App() {
     setRoom(null);
   }
 
-  if (!room) return <Home onCreate={createRoom} onJoin={joinRoom} error={error} />;
+  if (!room) return (
+    <>
+      <Home onCreate={createRoom} onJoin={joinRoom} error={error} />
+      <GithubCorner />
+    </>
+  );
 
   const me = room.players.find(p => p.id === playerId);
   const isHost = room.hostId === playerId;
@@ -122,6 +128,7 @@ export default function App() {
       {room.phase === 'judge_reveal' && judgeName && <JudgeOverlay name={judgeName} />}
       {toast && <div className="toast">{toast}</div>}
       {screen}
+      <GithubCorner />
     </>
   );
 }

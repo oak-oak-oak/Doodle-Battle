@@ -151,20 +151,34 @@ h4 { font-weight: 700; font-size: 14px; letter-spacing: 0.04em; color: var(--ink
 .home .tagline { margin-bottom: 36px; }
 .home-form { display: flex; flex-direction: column; gap: 10px; }
 .home-form .btn { margin-top: 4px; }
-.github-link {
-  display: inline-flex;
+.gh-corner {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 28px;
-  align-self: center;
-  color: var(--ink-mute);
+  justify-content: center;
+  color: var(--ink-dim);
   text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  transition: color .15s;
+  box-shadow: 0 6px 18px -6px rgba(80, 60, 40, 0.25);
+  transition: color .15s, transform .15s, border-color .15s, box-shadow .15s;
 }
-.github-link:hover { color: var(--ink); }
-.github-link svg { display: block; }
+.gh-corner:hover {
+  color: var(--ink);
+  border-color: var(--clay);
+  transform: translateY(-2px) rotate(-4deg);
+  box-shadow: 0 10px 22px -8px rgba(177, 74, 51, 0.4);
+}
+.gh-corner svg { display: block; }
+@media (max-width: 720px) {
+  .gh-corner { bottom: 12px; right: 12px; width: 36px; height: 36px; }
+}
 
 /* ---------- the logo ---------- */
 
