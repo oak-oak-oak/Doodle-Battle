@@ -1,5 +1,7 @@
 # Doodle Battle
 
+[![play](https://img.shields.io/badge/play-doodle--battle-b14a33)](https://github.com/oak-oak-oak/Doodle-Battle)
+
 A multiplayer drawing party game. Each round, every player writes a prompt — then the room votes on which one to draw. Two minutes on the canvas (30 seconds on speedrun rounds), then anonymous voting, then results.
 
 No accounts. No API keys. No external services. Just open it in a few browser tabs and play.
